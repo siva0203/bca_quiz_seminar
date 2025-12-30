@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz Result</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1:#071228;
+      --bg-2:#0b2b3f;
+      --accent:#4b79a1;
+      --accent-2:#7b61ff;
+      --card-bg: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.8);
+    }
+
+    /* Reset & layout */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:"Roboto",sans-serif;background: linear-gradient(135deg,var(--bg-1) 0%, var(--bg-2) 100%);color:#fff}
+    body{display:flex;align-items:center;justify-content:center;padding:20px}
+
+    /* subtle decorative background using radial gradients (no images) */
+    body::before{
+      content:"";
+      position:fixed;inset:0;z-index:0;
+      background:
+        radial-gradient(600px 400px at 10% 10%, rgba(107,198,255,0.12), transparent 20%),
+        radial-gradient(500px 350px at 90% 80%, rgba(187,123,255,0.12), transparent 18%);
+      pointer-events:none;
+      filter: blur(30px);
+      mix-blend-mode:screen;
+    }
+
+    /* Card */
+    .card{
+      position:relative;
+      z-index:1;
+      width:100%;
+      max-width:720px;
+      background:var(--card-bg);
+      border-radius:14px;
+      padding:22px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.04);
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap:18px;
+      align-items:center;
+      color:var(--muted);
+    }
+
+    h1{
+      margin:0;font-family:'Playfair Display',serif;font-size:22px;color:#e8f7ff;text-shadow:0 1px 0 rgba(0,0,0,0.4)
+    }
+    .name{font-size:13px;color:#dff0ff;margin-top:6px;opacity:0.95}
+
+    /* Score area */
+    .score-area{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px}
+    .ring{width:160px;height:160px;position:relative}
+    svg{width:100%;height:100%;transform:rotate(-90deg)}
+    .percent{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700}
+    .percent .value{font-size:28px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.6)}
+    .meta{font-size:12px;color:#dfefff;margin-top:6px}
+
+    /* details & actions */
+    .details{padding:6px 6px 6px 0}
+    .status{
+      display:inline-block;padding:10px 12px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      color:#fff;font-weight:600;
+    }
+    .desc{margin-top:10px;font-size:14px;color:#dfefff;opacity:0.95}
+
+    .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;font-size:14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    }
+    .btn.primary{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff }
+    .btn.ghost{ background:transparent;color:#dfefff;border:1px solid rgba(255,255,255,0.06) }
+
+    /* ensure retry is clearly visible */
+    .btn.retry{ background: #fff;color:#0b2240;border:1px solid rgba(0,0,0,0.06) }
+
+    .note{margin-top:12px;font-size:13px;color:#cfe6ff;opacity:0.9}
+
+    @media (max-width:700px){
+      .card{grid-template-columns: 1fr; padding:16px}
+      .ring{width:140px;height:140px}
+    }
+  </style>
+</head>
+<body>
+
+  <main class="card" role="main" aria-labelledby="resultTitle">
+    <div style="grid-column:1/-1">
+      <h1 id="resultTitle">Quiz Result</h1>
+      <div class="name" id="participantName">Participant Name</div>
+    </div>
+
+    <div class="score-area" aria-hidden="false">
+      <div class="ring" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="img" aria-label="Score progress">
+          <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.08)" stroke-width="12" fill="none"></circle>
+          <circle id="prog" cx="50" cy="50" r="40" stroke="#7b61ff" stroke-width="12" stroke-linecap="round" fill="none"
+            stroke-dasharray="251.2" stroke-dashoffset="251.2"></circle>
+        </svg>
+        <div class="percent">
+          <div class="value" id="percentText">0%</div>
+          <div class="meta" id="scoreMeta">Score: 0 / 0</div>
+        </div>
+      </div>
+      <div class="note" id="notes" style="text-align:center">Good luck!</div>
+    </div>
+
+    <section class="details">
+      <div id="status" class="status" aria-live="polite">Status: —</div>
+      <div class="desc" id="descText">Status details here.</div>
+
+      <div class="actions" id="actionArea">
+        <button id="certBtn" class="btn primary" style="display:none">Generate Certificate</button>
+        <button id="retryBtn" class="btn retry">Retry Quiz</button>
+      </div>
+
+      <div class="note">Passing score: 70%. The retry button always remains visible for another attempt.</div>
+    </section>
+  </main>
+
+  <script>
+    // Lightweight result script (no external libs)
+    const participantName = localStorage.getItem('participantName') || 'Participant Name';
+    const score = parseInt(localStorage.getItem('quizScore')) || 0;
+    const total = parseInt(localStorage.getItem('quizTotal')) || 10;
+
+    // DOM bindings
+    document.getElementById('participantName').innerText = participantName;
+    document.getElementById('scoreMeta').innerText = `Score: ${score} / ${total}`;
+
+    const passScore = Math.ceil(total * 0.7);
+    const passed = score >= passScore;
+    const percentage = total ? Math.round((score / total) * 100) : 0;
+
+    // High-contrast status text
+    const statusEl = document.getElementById('status');
+    const descEl = document.getElementById('descText');
+    const notesEl = document.getElementById('notes');
+    if (passed) {
+      statusEl.innerText = `🎉 Passed — required ${passScore}/${total}`;
+      statusEl.style.background = 'linear-gradient(90deg,#1fb6ff,#8a5bff)';
+      descEl.innerText = 'Excellent work! You can generate your certificate.';
+      notesEl.innerText = 'Congratulations — you passed!';
+      document.getElementById('certBtn').style.display = 'inline-block';
+    } else {
+      statusEl.innerText = `❌ Failed — required ${passScore}/${total}`;
+      statusEl.style.background = 'linear-gradient(90deg,#ff7b7b,#ffb26b)';
+      descEl.innerText = 'Don\'t worry — try again to improve your score.';
+      notesEl.innerText = 'You can retry the quiz using the button on the right.';
+      // Cert button stays hidden
+    }
+
+    // Animate ring (simple CSS transition)
+    const prog = document.getElementById('prog');
+    const radius = 40;
+    const circumference = 2 * Math.PI * radius;
+    prog.style.strokeDasharray = circumference;
+    // small delay for nicer effect
+    setTimeout(() => {
+      const offset = circumference - (percentage / 100) * circumference;
+      prog.style.transition = 'stroke-dashoffset 1.2s ease-out';
+      prog.style.strokeDashoffset = offset;
+      // update number incrementally (easy ease)
+      const el = document.getElementById('percentText');
+      const start = 0;
+      const end = percentage;
+      const duration = 900;
+      const startTime = performance.now();
+      function tick(now) {
+        const t = Math.min((now - startTime) / duration, 1);
+        // ease out cubic
+        const v = Math.round(start + (1 - Math.pow(1 - t, 3)) * (end - start));
+        el.innerText = v + '%';
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }, 120);
+
+    // retry action: navigate to quiz start (adjust path if needed)
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      // Optionally clear score:
+      // localStorage.removeItem('quizScore'); localStorage.removeItem('quizTotal');
+      window.location.href = 'index.html';
+    });
+
+    // certificate action (lightweight): go to certificate page (simpler than rendering)
+    document.getElementById('certBtn').addEventListener('click', () => {
+      // If you have certificate.html that reads localStorage, navigate to it:
+      window.location.href = 'certificate.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #dbe6f6, #fdfefe);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* PAGE */
+.page {
+    width: 100%;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+/* CENTER FIX WRAPPER */
+.center-fix {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+    width: 100%;
+}
+
+/* SCALE WRAPPER */
+.scale-wrapper {
+    transform-origin: top center;
+}
+
+/* CERTIFICATE */
+.certificate {
+    width: 900px;
+    aspect-ratio: 2 / 1;
+    padding: 40px;
+    position: relative;
+    border-radius: 20px;
+    border: 8px solid #4b79a1;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    background: url('images/certificate_background.jpg') center / cover no-repeat;
+}
+
+/* LOGOS */
+.logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-row img {
+    width: 85px;
+}
+
+.college-name-container {
+    text-align: center;
+    flex: 1;
+}
+
+.college-name {
+    font-family: Impact, sans-serif;
+    font-size: 30px;
+    letter-spacing: 2px;
+    color: #1f2d3a;
+}
+
+.department-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* CONTENT */
+.seminar-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 15px 0;
+    color: #d35400;
+}
+
+.certificate h1 {
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    font-size: 34px;
+    color: #2c3e50;
+}
+
+.certificate h2 {
+    text-align: center;
+    font-size: 30px;
+    color: #c0392b;
+}
+
+#participantName {
+    font-family: 'Playfair Display', serif; /* classy serif */
+    font-weight: 800;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+
+    /* Deep blue gradient for richness */
+    background: linear-gradient(135deg, #0d1b3d, #1a2a5c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* subtle shadow for depth */
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+
+
+
+
+.certificate p {
+    text-align: center;
+    font-size: 18px;
+    color: #1f2d3a;
+}
+
+/* SIGN */
+.hod-sign {
+    position: absolute;
+    bottom: 35px;
+    left: 100px;
+    text-align: center;
+}
+
+.hod-sign img {
+    width: 85px;
+    position: relative;
+    top: 30px; /* moves the image 10px down */
+}
+
+
+.hod-sign p {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* BUTTONS */
+.download-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.download-container button {
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 8px 22px rgba(102,126,234,0.45);
+}
+
+/* 🔒 MOBILE — SCALE ONLY (NO CLIP) */
+@media (max-width: 900px) {
+    .scale-wrapper { transform: scale(0.78); }
+}
+
+@media (max-width: 600px) {
+    .scale-wrapper { transform: scale(0.58); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+  <div class="center-fix">
+    <div class="scale-wrapper" id="scaleWrapper">
+
+      <div class="certificate" id="certificate">
+        <div class="logo-row">
+          <img src="images/college_logo.png">
+          <div class="college-name-container">
+            <div class="college-name">TIRUKKOILUR COLLEGE OF ARTS AND SCIENCE</div>
+            <div class="department-name">Department of Computer Applications</div>
+          </div>
+          <img src="images/department_logo.png">
+        </div>
+
+        <div class="seminar-title">AI Seminar Quiz 2025</div>
+
+        <h1>Certificate of Completion</h1>
+        <p>This certificate is proudly presented to</p>
+        <h2 id="participantName">Participant Name</h2>
+        <p>for successfully completing the AI Seminar Quiz</p>
+        
+
+        <div class="hod-sign">
+          <img src="images/hod_signature.png">
+          <p>HOD Sign</p>
+        </div>
+      </div>
+
+      <div class="download-container">
+        <button onclick="downloadPNG()">Download PNG</button>
+        <button onclick="downloadPDF()">Download PDF</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  console.log("Saved name:", localStorage.getItem("participantName"));
+
+const participantName =
+    localStorage.getItem('participantName') &&
+    localStorage.getItem('participantName').trim() !== ""
+    ? localStorage.getItem('participantName')
+    : "Participant Name";
+
+
+document.getElementById('participantName').innerText = participantName;
+
+async function captureFullSize() {
+    const scaleWrapper = document.getElementById('scaleWrapper');
+
+    const originalTransform = scaleWrapper.style.transform;
+    scaleWrapper.style.transform = "none"; // 🔥 key fix
+
+    await new Promise(r => setTimeout(r, 60));
+
+    const canvas = await html2canvas(document.getElementById('certificate'), {
+        scale: 2,
+        useCORS: true
+    });
+
+    scaleWrapper.style.transform = originalTransform;
+    return canvas;
+}
+
+async function downloadPNG() {
+    const canvas = await captureFullSize();
+    const link = document.createElement('a');
+    link.download = `${participantName}_Certificate.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+}
+
+async function downloadPDF() {
+    const canvas = await captureFullSize();
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF('l', 'mm', 'a4');
+    pdf.addImage(imgData, 'PNG', 0, 0, 297, 148.5);
+    pdf.save(`${participantName}_Certificate.pdf`);
+}
+</script>
+
+</body>
+</html>

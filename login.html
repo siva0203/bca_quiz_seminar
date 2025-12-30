@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Seminar Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-1: #0f1724;
+  --bg-2: #1b2540;
+  --accent: #4fdcff;
+  --glass: rgba(255,255,255,0.04);
+  --glass-strong: rgba(0,0,0,0.7);
+  --text: #eaf7ff;
+  --muted: #9bd6e6;
+  --radius: 14px;
+}
+
+/* Reset & layout */
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg,var(--bg-1),var(--bg-2));
+  color:var(--text);
+  overflow:hidden;
+  position:relative;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Animated gradient backdrop */
+.bg-animated {
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background: linear-gradient(120deg, rgba(15,23,36,1) 0%, rgba(27,37,64,1) 50%, rgba(36,36,62,1) 100%);
+  background-size: 600% 600%;
+  animation: gradientShift 18s ease infinite;
+  filter: blur(10px) saturate(120%);
+  opacity:0.95;
+}
+@keyframes gradientShift{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* PARTICLE CANVAS */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  opacity:0.65;
+  pointer-events:none;
+}
+
+/* CONTAINER */
+.login-container{
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.5));
+  padding:28px;
+  border-radius:var(--radius);
+  box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 18px rgba(79,220,255,0.06) inset;
+  text-align:center;
+  width:92%;
+  max-width:420px;
+  z-index:1;
+  border: 1px solid rgba(79,220,255,0.06);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+/* LOGO */
+.logo{margin-bottom:10px;}
+.logo img{
+  width:140px;
+  filter:drop-shadow(0 6px 18px rgba(0,240,255,0.12));
+}
+
+/* TITLE */
+h2{
+  font-family:'Orbitron',sans-serif;
+  margin:6px 0 16px;
+  color:var(--accent);
+  text-shadow: 0 0 10px rgba(79,220,255,0.08);
+  letter-spacing:0.6px;
+}
+
+/* FORM */
+.form-row{margin:10px 0; text-align:left;}
+label{
+  display:block;
+  font-size:0.8rem;
+  color:var(--muted);
+  margin-bottom:6px;
+  padding-left:12px;
+}
+input[type="text"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:999px;
+  border:1.2px solid rgba(255,255,255,0.06);
+  background:rgba(0,0,0,0.45);
+  color:var(--text);
+  font-size:1rem;
+  outline:none;
+  transition:box-shadow .22s, border-color .22s, transform .12s;
+}
+input[type="text"]:focus{
+  border-color:var(--accent);
+  box-shadow:0 6px 20px rgba(79,220,255,0.08);
+  transform:translateY(-1px);
+}
+#seminarCode{
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:12px;
+  margin-top:14px;
+  font-size:1.05rem;
+  font-weight:600;
+  color:#001214;
+  background:linear-gradient(90deg,var(--accent),#00f0ff);
+  border:none;
+  border-radius:999px;
+  box-shadow:0 8px 28px rgba(79,220,255,0.12);
+  cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+button:hover{ transform:translateY(-3px); box-shadow:0 12px 36px rgba(79,220,255,0.18); }
+button:active{ transform:translateY(-1px); }
+
+/* STATUS */
+#status{
+  font-size:.9rem;
+  margin-top:10px;
+  color:var(--muted);
+  min-height:20px;
+}
+
+/* FOOTNOTE */
+.note{
+  margin-top:10px;
+  font-size:0.78rem;
+  color:#98d6ea;
+  opacity:0.85;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .logo img{width:60px;}
+  .login-container{padding:18px; max-width:330px;}
+  input{padding:10px;}
+  button{padding:10px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-animated" aria-hidden="true"></div>
+<canvas id="bg"></canvas>
+
+<div class="login-container" role="main" aria-labelledby="title">
+  <div class="logo">
+    <img src="images/department_logo.png" alt="Department Logo">
+  </div>
+
+  <h2 id="title">Login to Quiz</h2>
+
+  <form id="loginForm" autocomplete="off" novalidate>
+    <div class="form-row">
+      <label for="userName">Your name</label>
+      <input type="text" id="userName" name="name" placeholder="Enter your full name" required aria-required="true" />
+    </div>
+
+    <div class="form-row">
+      <label for="seminarCode">Seminar code</label>
+      <input type="text" id="seminarCode" name="code"  required aria-required="true" />
+    </div>
+
+    <div id="status" role="status" aria-live="polite"></div>
+
+    <button id="loginBtn" type="submit">Start Quiz</button>
+
+    <div class="note">Tip: Use the exact seminar code provided in your invite. Your name will be shown during the quiz.</div>
+  </form>
+</div>
+
+<script>
+const status = document.getElementById('status');
+const loginForm = document.getElementById('loginForm');
+const demoCorrectCode = "BCA2025";
+
+function setStatus(msg, isError = false) {
+  status.textContent = msg;
+  status.style.color = isError ? '#ff9aa2' : '#9bd6e6';
+}
+
+loginForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('userName').value.trim();
+  const code = document.getElementById('seminarCode').value.trim().toUpperCase();
+
+  if (!name) { setStatus('❗ Please enter your name!', true); return; }
+  if (!code) { setStatus('❗ Please enter the seminar code!', true); return; }
+
+  // ✅ Save participant name for certificate
+  localStorage.setItem("participantName", name);
+
+  if (code === demoCorrectCode) {
+    setStatus(`✅ Welcome ${name}! Redirecting...`);
+    setTimeout(() => { window.location.href = "quiz.html"; }, 800);
+  } else {
+    setStatus('❌ Invalid Seminar Code!', true);
+  }
+});
+
+// ---------- PARTICLE BACKGROUND ----------
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let w, h;
+function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+const colors = ["rgba(79,220,255,0.9)","rgba(180,100,255,0.85)","rgba(255,200,90,0.85)"];
+const particles = [];
+const count = Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 12000));
+for (let i=0; i<count; i++){
+  particles.push({
+    x: Math.random()*w,
+    y: Math.random()*h,
+    r: Math.random()*2+1.2,
+    dx: (Math.random()-0.5)*0.6,
+    dy: (Math.random()-0.5)*0.6,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    alpha: 0.5 + Math.random()*0.5
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < -10 || p.x > w+10) p.x = (p.x < 0) ? w : 0;
+    if (p.y < -10 || p.y > h+10) p.y = (p.y < 0) ? h : 0;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>

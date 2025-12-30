@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Seminar Quiz · Tirukkoilur College</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-top:#051019;
+  --bg-bot:#000;
+  --accent:#00f0e0;
+  --dept-color:#ffd36e;
+  --glass-border:rgba(0,240,224,.06);
+}
+
+/* ---------- RESET ---------- */
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  height:100%;
+  font-family:Inter,system-ui;
+  background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));
+  color:var(--accent);
+}
+
+#bg{position:fixed;inset:0;z-index:0}
+
+main{
+  position:relative;
+  z-index:5;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.card{
+  width:100%;
+  max-width:1100px;
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.006));
+  border-radius:14px;
+  padding:22px;
+  border:1px solid var(--glass-border);
+  box-shadow:0 18px 60px rgba(0,0,0,.55);
+}
+
+/* ---------- HEADER ---------- */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+}
+
+h1{
+  font-family:Orbitron;
+  font-size:clamp(1.3rem,2.6vw,2rem);
+}
+
+.college{
+  color:#fff;
+  opacity:.9;
+  font-weight:600;
+  margin-top:6px;
+}
+
+.dept{
+  margin-top:10px;
+  font-weight:800;
+  color:var(--dept-color);
+  padding:8px 14px;
+  border-radius:999px;
+  display:inline-block;
+  box-shadow:
+    0 0 18px rgba(255,211,110,.25),
+    0 0 32px rgba(255,211,110,.15) inset;
+}
+
+/* ---------- LOGOS ---------- */
+.logo,
+.skill{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:radial-gradient(circle,rgba(0,240,224,.12),rgba(0,0,0,.25));
+  transition:.3s ease;
+}
+
+.logo{
+  width:88px;
+  height:88px;
+}
+
+.skill{
+  width:54px;
+  height:54px;
+}
+
+/* College & Dept logos – ORIGINAL COLOR */
+.logo img{
+  width:62px;
+  filter:
+    drop-shadow(0 0 6px rgba(0,240,224,.35))
+    drop-shadow(0 0 14px rgba(0,240,224,.25));
+  transition:.3s ease;
+}
+
+.logo:hover{
+  transform:translateY(-4px) scale(1.05);
+}
+
+.logo:hover img{
+  filter:
+    drop-shadow(0 0 12px rgba(0,240,224,.55))
+    drop-shadow(0 0 26px rgba(0,240,224,.35));
+}
+
+/* Subject icons – white + glow */
+.skill img{
+  width:34px;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 6px rgba(0,240,224,.65))
+    drop-shadow(0 0 18px rgba(0,240,224,.45));
+  transition:.3s ease;
+}
+
+.skill:hover{
+  transform:translateY(-6px) scale(1.1);
+}
+
+.skill:hover img{
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 12px rgba(0,240,224,.9))
+    drop-shadow(0 0 32px rgba(0,240,224,.7));
+}
+
+/* ---------- CONTENT ---------- */
+.content{
+  margin-top:20px;
+  display:flex;
+  gap:22px;
+  flex-wrap:wrap;
+}
+
+.left{flex:1 1 480px}
+
+.type{
+  background:rgba(0,0,0,.3);
+  padding:14px;
+  border-radius:10px;
+  text-align:center;
+  min-height:60px;
+  font-family:monospace;
+}
+
+.skills{
+  display:flex;
+  gap:14px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+.right{
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.start{
+  background:linear-gradient(90deg,var(--accent),#7effd8);
+  color:#001a15;
+  padding:14px;
+  text-align:center;
+  border-radius:12px;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.caption{
+  font-style:italic;
+  color:#d9f8f3;
+  text-align:center;
+}
+
+.meta{
+  display:flex;
+  justify-content:space-between;
+  font-size:.9rem;
+  opacity:.8;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:760px){
+  .top{flex-direction:column}
+  .right{width:100%}
+  .logo{
+    width:70px;
+    height:70px;
+  }
+  .logo img{
+    width:48px;
+  }
+}
+</style>
+</head>
+
+<body>
+<canvas id="bg"></canvas>
+
+<main>
+<section class="card">
+
+<div class="top">
+  <div>
+    <h1>🤖 Welcome to the AI Seminar Quiz</h1>
+    <div class="college">Tirukkoilur College of Arts and Science</div>
+    <div class="dept">Department of Computer Applications</div>
+  </div>
+
+  <div style="display:flex;gap:12px">
+    <div class="logo">
+      <img src="images/college_logo.png" alt="College Logo">
+    </div>
+    <div class="logo">
+      <img src="images/department_logo.png" alt="Department Logo">
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="left">
+    <div class="type" id="typewriter"></div>
+
+    <div class="skills">
+      <div class="skill"><img src="images/python.svg" alt="Python"></div>
+      <div class="skill"><img src="images/java.svg" alt="Java"></div>
+      <div class="skill"><img src="images/ai.svg" alt="AI"></div>
+      <div class="skill"><img src="images/cn.svg" alt="Computer Networks"></div>
+    </div>
+  </div>
+
+  <div class="right">
+    <a href="login.html" class="start">Start Quiz ▸</a>
+    <div class="caption">"Talk is cheap, show me the code"<br>~ Linus Torvalds</div>
+    <div class="meta"><span>3 mins</span><span>10 Qs</span></div>
+  </div>
+</div>
+
+</section>
+</main>
+
+<!-- ---------- TYPEWRITER SCRIPT ---------- -->
+<script>
+const typeEl = document.getElementById("typewriter");
+
+const lines = [
+  "AI, Programming & General Knowledge — Prepare, Participate, Compete!",
+  "Think smart. Code smarter. Compete harder.",
+  "Think like a Machine Create like a Human"
+];
+
+let lineIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+function typeWriter(){
+  const text = lines[lineIndex];
+
+  if(!deleting){
+    typeEl.textContent = text.slice(0, ++charIndex);
+    if(charIndex === text.length){
+      setTimeout(() => deleting = true, 1400);
+    }
+  } else {
+    typeEl.textContent = text.slice(0, --charIndex);
+    if(charIndex === 0){
+      deleting = false;
+      lineIndex = (lineIndex + 1) % lines.length;
+    }
+  }
+  setTimeout(typeWriter, deleting ? 40 : 70);
+}
+
+typeWriter();
+</script>
+
+</body>
+</html>
