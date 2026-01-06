@@ -24,9 +24,15 @@ html,body{
   font-family:Inter,system-ui;
   background:linear-gradient(180deg,var(--bg-top),var(--bg-bot));
   color:var(--accent);
+  overflow-x: hidden;
 }
 
-#bg{position:fixed;inset:0;z-index:0}
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events: none; /* Allows mouse tracking but doesn't block clicks */
+}
 
 main{
   position:relative;
@@ -42,6 +48,7 @@ main{
   width:100%;
   max-width:1100px;
   background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.006));
+  backdrop-filter: blur(8px); /* Added blur for better contrast against animation */
   border-radius:14px;
   padding:22px;
   border:1px solid var(--glass-border);
@@ -101,7 +108,6 @@ h1{
   height:54px;
 }
 
-/* College & Dept logos – ORIGINAL COLOR */
 .logo img{
   width:62px;
   filter:
@@ -120,7 +126,6 @@ h1{
     drop-shadow(0 0 26px rgba(0,240,224,.35));
 }
 
-/* Subject icons – white + glow */
 .skill img{
   width:34px;
   filter:
@@ -182,6 +187,12 @@ h1{
   border-radius:12px;
   font-weight:800;
   text-decoration:none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0,240,224,0.4);
 }
 
 .caption{
@@ -257,14 +268,96 @@ h1{
 </section>
 </main>
 
-<!-- ---------- TYPEWRITER SCRIPT ---------- -->
 <script>
-const typeEl = document.getElementById("typewriter");
+/* ---------- BACKGROUND ANIMATION ---------- */
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const mouse = { x: null, y: null, radius: 150 };
 
+window.addEventListener('mousemove', (e) => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+function initBackground() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particles = [];
+    const particleCount = (canvas.width * canvas.height) / 9000;
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * 1.2;
+        this.speedY = (Math.random() - 0.5) * 1.2;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < mouse.radius){
+            if(mouse.x > this.x && this.x > 10) this.x -= 2;
+            if(mouse.x < this.x && this.x < canvas.width - 10) this.x += 2;
+            if(mouse.y > this.y && this.y > 10) this.y -= 2;
+            if(mouse.y < this.y && this.y < canvas.height - 10) this.y += 2;
+        }
+    }
+    draw() {
+        ctx.fillStyle = 'rgba(0, 240, 224, 0.7)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function connect() {
+    for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+            let dx = particles[a].x - particles[b].x;
+            let dy = particles[a].y - particles[b].y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 150) {
+                let opacity = 1 - (dist / 150);
+                ctx.strokeStyle = `rgba(0, 240, 224, ${opacity * 0.15})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x, particles[a].y);
+                ctx.lineTo(particles[b].x, particles[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    connect();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', initBackground);
+initBackground();
+animate();
+
+/* ---------- TYPEWRITER SCRIPT ---------- */
+const typeEl = document.getElementById("typewriter");
 const lines = [
   "AI, Programming & General Knowledge — Prepare, Participate, Compete!",
   "Think smart. Code smarter. Compete harder.",
-  "Think like a Machine Create like a Human"
+  "Think like a Machine, Create like a Human"
 ];
 
 let lineIndex = 0;
@@ -273,7 +366,6 @@ let deleting = false;
 
 function typeWriter(){
   const text = lines[lineIndex];
-
   if(!deleting){
     typeEl.textContent = text.slice(0, ++charIndex);
     if(charIndex === text.length){
@@ -288,9 +380,7 @@ function typeWriter(){
   }
   setTimeout(typeWriter, deleting ? 40 : 70);
 }
-
 typeWriter();
 </script>
-
 </body>
 </html>
