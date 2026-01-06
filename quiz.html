@@ -1,259 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Seminar Quiz</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AI Multi-Subject Quiz</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --card:#071022;
-  --glow1:#ff5fd1;
-  --glow2:#5df0ff;
-  --glow3:#9b7bff;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Poppins,system-ui;
-  background:#05030a;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#dff;
-  overflow:hidden;
-}
-.bg{
-  position:fixed;inset:-20%;z-index:-1;
-  filter:blur(70px);
-  background:
-    radial-gradient(40% 40% at 10% 20%, rgba(95,0,255,0.18), transparent 10%),
-    radial-gradient(50% 50% at 80% 80%, rgba(255,90,150,0.12), transparent 12%),
-    linear-gradient(135deg,#020617 0%, #071126 50%, #001728 100%);
-  animation:hue 12s linear infinite
-}
-@keyframes hue{50%{filter:hue-rotate(30deg) blur(72px)}100%{filter:blur(70px)}}
+    <style>
+        :root {
+            --card: #071022;
+            --glow1: #ff5fd1;
+            --glow2: #5df0ff;
+            --glow3: #9b7bff;
+            --bca-special: linear-gradient(135deg, #ff00d0 0%, #7000ff 100%);
+        }
 
-.card{
-  width:100%;
-  max-width:720px;
-  padding:26px;
-  border-radius:14px;
-  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-  box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  border:1px solid rgba(255,255,255,0.03)
-}
-.center{display:flex;flex-direction:column;align-items:center;gap:18px}
-h1{
-  font-family:Orbitron,monospace;
-  margin:0;
-  color:var(--glow2);
-  text-shadow:0 0 18px rgba(93,240,255,0.18)
-}
-button{
-  cursor:pointer;border:0;
-  padding:10px 16px;
-  border-radius:10px;
-  font-weight:700
-}
-.start-btn{
-  background:linear-gradient(90deg,var(--glow2),var(--glow3));
-  color:#000
-}
-.small{color:#aef6ff;font-size:0.95rem}
+        * { box-sizing: border-box; }
 
-#quiz{display:none}
-#question{min-height:56px;margin:8px 0;color:#e9ffff;font-size:1.05rem}
-.opts{display:flex;flex-direction:column;gap:10px}
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #05030a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dff;
+            overflow-x: hidden;
+        }
 
-label.opt{
-  display:flex;gap:12px;align-items:center;
-  padding:12px;border-radius:10px;
-  background:rgba(255,255,255,0.01);
-  border:1px solid rgba(0,255,255,0.03);
-  cursor:pointer
-}
-input[type=radio]{
-  width:18px;height:18px;
-  appearance:none;
-  border-radius:6px;
-  border:2px solid var(--glow2)
-}
-input[type=radio]:checked{
-  background:linear-gradient(90deg,var(--glow2),var(--glow3));
-  border-color:var(--glow3)
-}
+        .bg {
+            position: fixed; inset: -20%; z-index: -1;
+            filter: blur(70px);
+            background:
+                radial-gradient(40% 40% at 10% 20%, rgba(95, 0, 255, 0.18), transparent 10%),
+                radial-gradient(50% 50% at 80% 80%, rgba(255, 90, 150, 0.12), transparent 12%),
+                linear-gradient(135deg, #020617 0%, #071126 50%, #001728 100%);
+            animation: hue 12s linear infinite;
+        }
 
-.row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-top:14px;
-  flex-wrap:wrap
-}
-.progress{
-  height:10px;
-  background:rgba(255,255,255,0.03);
-  border-radius:999px;
-  overflow:hidden;
-  width:160px
-}
-.bar{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,var(--glow1),var(--glow2));
-  transition:width .25s
-}
-.next{
-  background:linear-gradient(90deg,var(--glow1),var(--glow3));
-  color:#000;
-  border-radius:10px;
-  padding:10px 16px
-}
-.next[disabled]{opacity:.55;cursor:not-allowed}
+        @keyframes hue { 50% { filter: hue-rotate(30deg) blur(72px) } 100% { filter: blur(70px) } }
 
-/* TIMER */
-.timer{
-  font-family:Orbitron,monospace;
-  font-size:0.95rem;
-  color:var(--glow2)
-}
-.timer.danger{color:#ff6b6b}
+        .card {
+            width: 95%;
+            max-width: 720px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
 
-@media(max-width:560px){
-  .card{padding:18px}
-  .progress{width:120px}
-}
-</style>
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 25px;
+            color: var(--glow2);
+            text-shadow: 0 0 15px rgba(93, 240, 255, 0.4);
+            font-size: 2rem;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .subj-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .subj-btn:hover {
+            background: rgba(93, 240, 255, 0.1);
+            border-color: var(--glow2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(93, 240, 255, 0.15);
+        }
+
+        .bca-btn {
+            grid-column: span 2;
+            background: var(--bca-special);
+            border: none;
+            font-size: 1.3rem;
+            margin-top: 10px;
+            box-shadow: 0 0 25px rgba(255, 0, 208, 0.4);
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 208, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 45px rgba(255, 0, 208, 0.8); transform: scale(1.02); }
+        }
+
+        #quiz { display: none; text-align: left; }
+        
+        #question { 
+            min-height: 90px; 
+            margin-bottom: 25px; 
+            color: #fff; 
+            font-size: 1.25rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .opts { display: flex; flex-direction: column; gap: 12px; }
+
+        .opt {
+            display: flex; gap: 15px; align-items: center;
+            padding: 18px; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opt:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--glow2); }
+
+        input[type=radio] {
+            width: 22px; height: 22px;
+            appearance: none;
+            border-radius: 50%;
+            border: 2px solid var(--glow2);
+            cursor: pointer;
+        }
+
+        input[type=radio]:checked {
+            background: var(--glow2);
+            box-shadow: 0 0 15px var(--glow2);
+            border-color: #fff;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-container { flex-grow: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--glow1), var(--glow2)); transition: width 0.5s ease; }
+
+        .timer { font-family: 'Orbitron', monospace; color: var(--glow2); min-width: 70px; text-align: center; font-size: 1.1rem; }
+        .timer.danger { color: #ff4d4d; animation: shake 0.3s infinite; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(2px); } 75% { transform: translateX(-2px); } }
+
+        .next-btn {
+            background: linear-gradient(90deg, var(--glow2), var(--glow3));
+            color: #000;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .next-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        @media (max-width: 500px) {
+            .subject-grid { grid-template-columns: 1fr; }
+            .bca-btn { grid-column: auto; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 
 <body>
-<div class="bg"></div>
+    <div class="bg"></div>
 
-<div class="card center">
+    <div class="card">
+        <!-- Subject Selection -->
+        <div id="selectionScreen">
+            <h1>Select Subject</h1>
+            <div class="subject-grid">
+                <button class="subj-btn bca-btn" onclick="prepareQuiz('bca')">BCA Department</button>
+                <button class="subj-btn" onclick="prepareQuiz('tamil')">Tamil</button>
+                <button class="subj-btn" onclick="prepareQuiz('english')">English</button>
+                <button class="subj-btn" onclick="prepareQuiz('maths')">Maths</button>
+                <button class="subj-btn" onclick="prepareQuiz('physics')">Physics</button>
+                <button class="subj-btn" onclick="prepareQuiz('chemistry')">Chemistry</button>
+                <button class="subj-btn" onclick="prepareQuiz('cs')">Computer Science</button>
+            </div>
+        </div>
 
-  <!-- START -->
-  <div id="startScreen" class="center">
-    <h1>AI Seminar Quiz</h1>
-    <div class="small">Press start to begin</div>
-    <button id="start" class="start-btn">Start</button>
-  </div>
+        <!-- Quiz Interface -->
+        <div id="quiz">
+            <div id="question"></div>
+            <form id="opts" class="opts"></form>
 
-  <!-- QUIZ -->
-  <div id="quiz">
-    <div id="question"></div>
-    <form id="opts" class="opts"></form>
-
-    <div class="row">
-      <div class="progress"><div id="bar" class="bar"></div></div>
-
-      <div style="display:flex;gap:10px;align-items:center">
-        <div id="timer" class="timer">03:00</div>
-        <div id="count" class="small">0 / 0</div>
-        <button id="next" class="next" disabled>Next</button>
-      </div>
+            <div class="row">
+                <div class="progress-container">
+                    <div id="bar" class="bar"></div>
+                </div>
+                <div class="timer" id="timer">03:00</div>
+                <div id="count" style="font-size: 0.9rem; font-weight: 600;">0 / 10</div>
+                <button id="next" class="next-btn" onclick="handleNext()" disabled>Next</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-</div>
+    <!-- External Questions File -->
+    <script src="question.js"></script>
 
-<script src="question.js"></script>
-<script>
-/* QUESTION SELECTION */
-const pickAnyTwo=s=>{
-  const b=questions.slice(s,s+20);
-  for(let i=0;i<2&&i<b.length;i++){
-    const j=i+Math.floor(Math.random()*(b.length-i));
-    [b[i],b[j]]=[b[j],b[i]];
-  }
-  return b.slice(0,Math.min(2,b.length));
-};
-const finalQ=[];
-for(let i=0;i<questions.length;i+=20) finalQ.push(...pickAnyTwo(i));
-finalQ.sort(()=>Math.random()-0.5);
+    <script>
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = [];
+        let timeLeft = 180;
+        let timerInterval = null;
 
-/* STATE */
-let idx=0;
-let answers=new Array(finalQ.length).fill(null);
-let timeLeft=180; // 3 minutes
-let timerInterval=null;
+        const el = id => document.getElementById(id);
 
-const el=id=>document.getElementById(id);
-const qEl=el('question'), optsForm=el('opts');
-const nextBtn=el('next'), count=el('count'), bar=el('bar');
-const timerEl=el('timer');
+        /**
+         * Shuffle helper (Fisher-Yates)
+         */
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
-/* TIMER */
-function startTimer(){
-  timerInterval=setInterval(()=>{
-    timeLeft--;
-    const m=String(Math.floor(timeLeft/60)).padStart(2,'0');
-    const s=String(timeLeft%60).padStart(2,'0');
-    timerEl.textContent=`${m}:${s}`;
+        /**
+         * Prepare and Randomize the Quiz
+         */
+        function prepareQuiz(category) {
+            // Guard: Check if allQuestions is loaded from questions.js
+            if (typeof allQuestions === 'undefined') {
+                alert("Questions are still loading or 'questions.js' is missing. Please check your files.");
+                return;
+            }
 
-    if(timeLeft<=30) timerEl.classList.add('danger');
-    if(timeLeft<=0){
-      clearInterval(timerInterval);
-      finish();
-    }
-  },1000);
-}
+            const pool = allQuestions[category];
+            if (!pool) return;
 
-/* RENDER */
-function render(){
-  const q=finalQ[idx];
-  qEl.textContent=q.q;
-  optsForm.innerHTML='';
+            // 1. Pick 10 random questions from the 50 available
+            let selected = shuffle([...pool]).slice(0, 10);
 
-  q.o.forEach((t,i)=>{
-    const lbl=document.createElement('label');
-    lbl.className='opt';
-    lbl.innerHTML=`<input type="radio" name="opt" value="${i}"><div>${t}</div>`;
-    optsForm.appendChild(lbl);
-    lbl.querySelector('input').addEventListener('change',e=>{
-      answers[idx]=Number(e.target.value);
-      nextBtn.disabled=false;
-    });
-  });
+            // 2. Scramble options for each question while tracking the correct answer
+            currentQuestions = selected.map(item => {
+                const correctText = item.o[item.a]; // Store text of the correct answer
+                const scrambledOptions = shuffle([...item.o]); // Scramble a copy of options
+                return {
+                    q: item.q,
+                    o: scrambledOptions,
+                    a: scrambledOptions.indexOf(correctText) // New index of the correct answer
+                };
+            });
 
-  count.textContent=`${idx+1} / ${finalQ.length}`;
-  bar.style.width=Math.round((idx/finalQ.length)*100)+'%';
-  nextBtn.disabled=true;
-}
+            // Reset state
+            userAnswers = new Array(10).fill(null);
+            currentIndex = 0;
+            timeLeft = 180;
 
-/* START */
-el('start').onclick=()=>{
-  el('startScreen').style.display='none';
-  el('quiz').style.display='block';
-  render();
-  startTimer();
-};
+            // UI Switch
+            el('selectionScreen').style.display = 'none';
+            el('quiz').style.display = 'block';
+            
+            renderQuestion();
+            startTimer();
+        }
 
-/* NEXT */
-nextBtn.onclick=()=>{
-  if(answers[idx]==null) return;
-  idx++;
-  if(idx<finalQ.length) render();
-  else finish();
-};
+        function renderQuestion() {
+            const data = currentQuestions[currentIndex];
+            el('question').textContent = data.q;
+            
+            const optsContainer = el('opts');
+            optsContainer.innerHTML = '';
 
-/* FINISH */
-function finish(){
-  clearInterval(timerInterval);
-  const score=finalQ.reduce((a,q,i)=>a+(answers[i]===q.a),0);
-  localStorage.setItem('quizScore',score);
-  localStorage.setItem('quizTotal',finalQ.length);
-  location.href='result.html';
-}
+            data.o.forEach((text, i) => {
+                const label = document.createElement('label');
+                label.className = 'opt';
+                label.innerHTML = `
+                    <input type="radio" name="ans" value="${i}" ${userAnswers[currentIndex] === i ? 'checked' : ''}>
+                    <span>${text}</span>
+                `;
+                label.onclick = () => {
+                    userAnswers[currentIndex] = i;
+                    el('next').disabled = false;
+                };
+                optsContainer.appendChild(label);
+            });
 
-/* GUARD */
-if(typeof questions==='undefined'){
-  el('start').disabled=true;
-}
-</script>
+            // Update Progress & UI
+            el('count').textContent = `${currentIndex + 1} / 10`;
+            el('bar').style.width = `${(currentIndex / 10) * 100}%`;
+            el('next').disabled = (userAnswers[currentIndex] === null);
+            el('next').textContent = (currentIndex === 9) ? 'Finish' : 'Next';
+        }
+
+        function handleNext() {
+            if (currentIndex < 9) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                const s = String(timeLeft % 60).padStart(2, '0');
+                el('timer').textContent = `${m}:${s}`;
+
+                if (timeLeft <= 30) el('timer').classList.add('danger');
+                if (timeLeft <= 0) finishQuiz();
+            }, 1000);
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            // Calculate score using the scrambled indexes
+            const score = currentQuestions.reduce((acc, q, i) => {
+                return acc + (userAnswers[i] === q.a ? 1 : 0);
+            }, 0);
+
+            localStorage.setItem('quizScore', score);
+            localStorage.setItem('quizTotal', 10);
+            
+            el('quiz').innerHTML = `<h1 style="color:var(--glow2)">Calculating results...</h1>`;
+            
+            setTimeout(() => {
+                window.location.href = 'result.html';
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
