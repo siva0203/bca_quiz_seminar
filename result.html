@@ -124,7 +124,7 @@
         <button id="retryBtn" class="btn retry">Retry Quiz</button>
       </div>
 
-      <div class="note">Passing score: 70%. The retry button always remains visible for another attempt.</div>
+      <div class="note">Passing score: 40%. The retry button always remains visible for another attempt.</div>
     </section>
   </main>
 
@@ -138,7 +138,7 @@
     document.getElementById('participantName').innerText = participantName;
     document.getElementById('scoreMeta').innerText = `Score: ${score} / ${total}`;
 
-    const passScore = Math.ceil(total * 0.7);
+    const passScore = Math.ceil(total * 0.4);
     const passed = score >= passScore;
     const percentage = total ? Math.round((score / total) * 100) : 0;
 
@@ -200,4 +200,5 @@
     });
   </script>
 </body>
+
 </html>
